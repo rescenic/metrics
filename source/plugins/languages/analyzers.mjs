@@ -181,6 +181,7 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
             if (!lang)
               return
             //Added line marker
+            console.log(line, /^[+]\s*(?<line>[\s\S]+)$/.test(line))
             if (/^[+]\s*(?<line>[\s\S]+)$/.test(line)) {
               const size = Buffer.byteLength(line.match(/^[+]\s*(?<line>[\s\S]+)$/)?.groups?.line ?? "", "utf-8")
               results.stats[lang] = (results.stats[lang] ?? 0) + size

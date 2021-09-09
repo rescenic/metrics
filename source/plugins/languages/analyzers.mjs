@@ -32,7 +32,6 @@ export async function indepth({login, data, imports, repositories}, {skipped, ca
       await analyze(arguments[0], {results, path, categories})
     }
     catch (error) {
-      console.log(error)
       console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured while processing ${repo}, skipping...`)
     }
     finally {
@@ -62,7 +61,6 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
     }
   }
   catch (error) {
-    console.log(error)
     console.debug(`metrics/compute/${login}/plugins > languages > no more page to load`)
   }
   console.debug(`metrics/compute/${login}/plugins > languages > ${commits.length} commits loaded`)
@@ -112,7 +110,6 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
           break
         }
         catch (error) {
-          console.log(error)
           console.debug(`metrics/compute/${login}/plugins > languages > cannot load .gitattributes on branch ${branch} for ${repo}`)
         }
       }
@@ -130,7 +127,6 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
     }
   }
   catch (error) {
-    console.log(error)
     console.debug(`metrics/compute/${login}/plugins > languages > an error occured while processing recently used languages`)
   }
   finally {
@@ -145,10 +141,10 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
 async function analyze({login, imports, data}, {results, path, categories = ["programming", "markup"]}) {
   //Gather language data
   console.debug(`metrics/compute/${login}/plugins > languages > indepth > running linguist`)
-  console.log("DEBUG >>>", path)
+  console.log("DEBUG | repository to analyze", path)
   const {files:{results:files}, languages:{results:languageResults}} = await linguist(path)
   Object.assign(results.colors, Object.fromEntries(Object.entries(languageResults).map(([lang, {color}]) => [lang, color])))
-  console.log("DEBUG >>>>>>>>", files, languageResults, results)
+  console.log("DEBUG | linguists results", files, languageResults)
 
   //Processing diff
   const per_page = 1
@@ -185,7 +181,6 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
             if (!lang)
               return
             //Added line marker
-            console.log(line, /^[+]\s*(?<line>[\s\S]+)$/.test(line))
             if (/^[+]\s*(?<line>[\s\S]+)$/.test(line)) {
               const size = Buffer.byteLength(line.match(/^[+]\s*(?<line>[\s\S]+)$/)?.groups?.line ?? "", "utf-8")
               results.stats[lang] = (results.stats[lang] ?? 0) + size
@@ -194,7 +189,6 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
             }
           }
           catch (error) {
-            console.log(error)
             console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured while processing line (${error.message}), skipping...`)
           }
         }
@@ -205,13 +199,12 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
       }
     }
     catch (error) {
-      console.log(error)
       console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured on page ${page}, skipping...`)
       results.missed += per_page
     }
   }
   results.files += edited.size
-  console.log("%%%%%%%%", results)
+  console.log("DEBUG | current metrics results", results)
 }
 
 //import.meta.main

@@ -144,8 +144,8 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
   //Gather language data
   console.debug(`metrics/compute/${login}/plugins > languages > indepth > running linguist`)
   console.log("DEBUG | repository to analyze", path)
-  const {results:files, languages:languageResults} = await linguist(path)
-  Object.assign(results.colors, Object.fromEntries(Object.entries(languageResults.all).map(([lang, {color}]) => [lang, color])))
+  const {files:{results:files}, languages:{results:languageResults}} = await linguist(path)
+  Object.assign(results.colors, Object.fromEntries(Object.entries(languageResults).map(([lang, {color}]) => [lang, color])))
   console.log("DEBUG | linguists results", files, languageResults)
 
   //Processing diff

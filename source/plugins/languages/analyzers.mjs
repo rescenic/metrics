@@ -143,6 +143,7 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
   console.debug(`metrics/compute/${login}/plugins > languages > indepth > running linguist`)
   const {files:{results:files}, languages:{results:languageResults}} = await linguist(path)
   Object.assign(results.colors, Object.fromEntries(Object.entries(languageResults).map(([lang, {color}]) => [lang, color])))
+  console.log("DEBUG >>>>>>>>", files, languageResults)
 
   //Processing diff
   const per_page = 1
@@ -168,8 +169,13 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
               return
             //File marker
             if (/^[+]{3}\sb[/](?<file>[\s\S]+)$/.test(line)) {
+              console.log("DEBUG > FILE", file, file in files)
+              file = line.match(/^[+]{3}\sb[/](?<file>[\s\S]+)$/)?.groups?.file.replace(/^/, `${path}/`) ?? null
+              console.log("DEBUG > FILE (1)", file, file in files)
               file = `${path}/${line.match(/^[+]{3}\sb[/](?<file>[\s\S]+)$/)?.groups?.file}`.replace(/\\/g, "/")
+              console.log("DEBUG > FILE (2)", file, file in files)
               lang = files[file] ?? null
+              console.log("DEBUG > LANG", lang)
               if ((lang)&&(!categories.includes(languageResults[lang].type)))
                 lang = null
               edited.add(file)

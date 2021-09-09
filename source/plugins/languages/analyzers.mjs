@@ -143,7 +143,7 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
   console.debug(`metrics/compute/${login}/plugins > languages > indepth > running linguist`)
   const {files:{results:files}, languages:{results:languageResults}} = await linguist(path)
   Object.assign(results.colors, Object.fromEntries(Object.entries(languageResults).map(([lang, {color}]) => [lang, color])))
-  console.log("DEBUG >>>>>>>>", files, languageResults)
+  console.log("DEBUG >>>>>>>>", files, languageResults, results)
 
   //Processing diff
   const per_page = 1
@@ -187,12 +187,14 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
             //Added line marker
             if (/^[+]\s*(?<line>[\s\S]+)$/.test(line)) {
               const size = Buffer.byteLength(line.match(/^[+]\s*(?<line>[\s\S]+)$/)?.groups?.line ?? "", "utf-8")
+              console.log("::::::", size)
               results.stats[lang] = (results.stats[lang] ?? 0) + size
               results.lines[lang] = (results.lines[lang] ?? 0) + 1
               results.total += size
             }
           }
           catch (error) {
+            console.log(error)
             console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured while processing line (${error.message}), skipping...`)
           }
         }
@@ -202,7 +204,8 @@ async function analyze({login, imports, data}, {results, path, categories = ["pr
         break
       }
     }
-    catch {
+    catch (error) {
+      console.log(error)
       console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured on page ${page}, skipping...`)
       results.missed += per_page
     }

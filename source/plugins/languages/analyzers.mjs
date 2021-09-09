@@ -32,6 +32,7 @@ export async function indepth({login, data, imports, repositories}, {skipped, ca
       await analyze(arguments[0], {results, path, categories})
     }
     catch (error) {
+      console.log(error)
       console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured while processing ${repo}, skipping...`)
     }
     finally {
@@ -60,7 +61,8 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
       )
     }
   }
-  catch {
+  catch (error) {
+    console.log(error)
     console.debug(`metrics/compute/${login}/plugins > languages > no more page to load`)
   }
   console.debug(`metrics/compute/${login}/plugins > languages > ${commits.length} commits loaded`)
@@ -109,7 +111,8 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
           console.debug(`metrics/compute/${login}/plugins > languages > successfully fetched .gitattributes for ${repo}`)
           break
         }
-        catch {
+        catch (error) {
+          console.log(error)
           console.debug(`metrics/compute/${login}/plugins > languages > cannot load .gitattributes on branch ${branch} for ${repo}`)
         }
       }
@@ -126,7 +129,8 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
       results.commits = commits.length
     }
   }
-  catch {
+  catch (error) {
+    console.log(error)
     console.debug(`metrics/compute/${login}/plugins > languages > an error occured while processing recently used languages`)
   }
   finally {

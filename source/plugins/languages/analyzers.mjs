@@ -32,6 +32,7 @@ export async function indepth({login, data, imports, repositories}, {skipped, ca
       await analyze(arguments[0], {results, path, categories})
     }
     catch (error) {
+      console.log(error)
       console.debug(`metrics/compute/${login}/plugins > languages > indepth > an error occured while processing ${repo}, skipping...`)
     }
     finally {
@@ -127,6 +128,7 @@ export async function recent({login, data, imports, rest, account}, {skipped = [
     }
   }
   catch (error) {
+    console.log(error)
     console.debug(`metrics/compute/${login}/plugins > languages > an error occured while processing recently used languages`)
   }
   finally {
